@@ -1,0 +1,4 @@
+#task1
+task1的主要目的是跑通程序，其内容包含数据准备和workflow，其中workflow是基于lightgbm搭建的。
+需要注意的是，在本地pycharm上运行workflow时，所有代码应该放在if __name__ == "__main__": 下面。
+另外为了防止调用redis时出错，在qlib.init中要加上参数 expression_cache=None, dataset_cache=None。
