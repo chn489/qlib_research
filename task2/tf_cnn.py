@@ -20,6 +20,7 @@ class CnnModel(Model):
 
     def fit(self, dataset: Dataset):
         self.dense2_par = 1
+        self.loss = tf.keras.losses.MeanSquaredError()
         df_train, df_valid, df_test = dataset.prepare(
             ["train", "valid", "test"],
             col_set=["feature", "label"],
