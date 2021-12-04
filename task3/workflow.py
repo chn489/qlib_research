@@ -4,8 +4,7 @@ from qlib.utils import init_instance_by_config
 from qlib.workflow import R
 from qlib.workflow.record_temp import SignalRecord, PortAnaRecord
 from qlib.utils import flatten_dict
-from qlib.contrib.report import analysis_model, analysis_position
-import pandas as pd
+from qlib.contrib.report import analysis_position
 
 
 def get_data(provider, region):
@@ -142,17 +141,10 @@ def backtest(port_analysis_config, rid, dataset):
         # backtest & analysis
         par = PortAnaRecord(recorder, port_analysis_config, "day")
         par.generate()
+
     recorder = R.get_recorder(recorder_id=ba_rid, experiment_name="backtest_analysis")
-    print(recorder)
-    pred_df = recorder.load_object("pred.pkl")
-    pred_df_dates = pred_df.index.get_level_values(level='datetime')
     report_normal_df = recorder.load_object("portfolio_analysis/report_normal_1day.pkl")
-    positions = recorder.load_object("portfolio_analysis/positions_normal_1day.pkl")
-    analysis_df = recorder.load_object("portfolio_analysis/port_analysis_1day.pkl")
-    analysis_position.report_graph(report_normal_df)
-    analysis_position.risk_analysis_graph(analysis_df, report_normal_df)
+    report_normal_df = report_normal_df.dropna(axis=0)
     label_df = dataset.prepare("test", col_set="label")
     label_df.columns = ['label']
-    pred_label = pd.concat([label_df, pred_df], axis=1, sort=True).reindex(label_df.index)
-    analysis_position.score_ic_graph(pred_label)
-    analysis_model.model_performance_graph(pred_label)
+    analysis_position.report_graph(report_normal_df)
